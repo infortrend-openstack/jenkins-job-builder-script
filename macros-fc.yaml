@@ -1,0 +1,175 @@
+- builder:
+    name: create-process-outputs
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+
+          TEMPFILE=`mktemp`
+          cat <<EOF >$TEMPFILE
+          #! usr/bin/python
+          """
+          process_outputs.
+
+          This script performs several string manipulation operations as directed to by
+          instance_master.sh in order to take the output of shell commands and extract
+          and return data.
+
+          """
+          import sys
+          import argparse
+
+          # Command Line Options
+          parser = argparse.ArgumentParser(description="Work With Command Outputs \\
+                                           to Assist With Automated PCI Passthrough")
+          parser.add_argument('--ip', default=None, action='store',
+                              help="Instance IP Address")
+          parser.add_argument('--ifconfig', default=False, action='store_true',
+                              help="Flag to Indicate IP Address Desired from ifconfig")
+          parser.add_argument('--virsh_name', default=None, action='store_true',
+                              help="Flag to Indicate Virsh Name Desired")
+          parser.add_argument('--pci_name', default=None, action='store_true',
+                              help="Flag to Indicate PCI Card Name Desired")
+          parser.add_argument('--xml', default=None, action='store_true',
+                              help="Flag to Indicate XML String Desired")
+
+          args = parser.parse_args()
+          output = sys.stdin.read()
+
+          # Lookup nova name by IP in output from nova list.
+          if args.ip:
+              lines = output.split("\n")
+              for line in lines:
+                  if args.ip in line:
+                      print line.split(" ")[1]
+                      break
+
+          # Extract IP address from ifconfig output.
+          elif args.ifconfig:
+              lines = output.split("\n")
+              for i in range(len(lines)):
+                  if "eth0" in lines[i]:
+                      print lines[i + 1].strip().split("inet addr:")[1].split(" ")[0]
+
+          # Extract virsh name from nova show output.
+          elif args.virsh_name:
+              lines = output.split("\n")
+              for line in lines:
+                  if "OS-EXT-SRV-ATTR:instance_name" in line:
+                      print line.strip().split("|")[2].split(" ")[1]
+
+          # Restructure lspci output to give PCI card name recognizable by virsh.
+          elif args.pci_name:
+              lines = output.split("\n")
+              card_name = lines[0].split(" ")[0]
+              result = "pci_0000_"
+              for char in card_name:
+                  if char in [":", "."]:
+                      result += "_"
+                  else:
+                      result += char
+              print result
+
+          # Generate XML snippet to be injected into device attachment configuration.
+          elif args.xml:
+              tokens = output.split("_")
+              xml = "<address domain='0x0000' bus='0x{0}' slot='0x{1}' function='0x{2}'/>"
+              xml = xml.format(tokens[2], tokens[3], tokens[4])
+              print xml
+
+          EOF
+
+          chmod 0555 $TEMPFILE
+          sudo chown jenkins:jenkins $TEMPFILE
+          sudo mv -f $TEMPFILE /home/jenkins/process_outputs.py
+
+- builder:
+    name: create-fcoe
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          TEMPFILE=`mktemp`
+          cat <<EOF >$TEMPFILE
+          <hostdev mode='subsystem' type='pci' managed='yes'>
+            <source>
+                  <address domain='0x0000' bus='0x5' slot='0x00' function='0x2'/>
+            </source>
+          </hostdev>
+          EOF
+          chmod 0777 $TEMPFILE
+          sudo chown jenkins:jenkins $TEMPFILE
+          sudo mv -f $TEMPFILE /home/jenkins/fcoe.xml
+
+- builder:
+    name: invoke-fc-passthrough
+    builders:
+      - create-process-outputs
+      - create-fcoe
+      - shell: |
+          #!/bin/bash -xe
+
+          #Let's go to the top level folder where all our pci passthrough files are located
+          cd /home/jenkins/
+
+          # "instance_master/sh" combines shell commands and Python scripts to extract a
+          # chain of data in order to finally pass to virsh the information it
+          # needs to successfully pass through a Fibre Channel PCI Card to the virtual
+          # machine this script is running on. The instance only knows its IP address,
+          # while its Virsh name is required for pass through. This script uses Nova on
+          # the provider blade as an intermediary to find the name. Meanwhile, this
+          # script finds the Fibre Channel PCI card on the provider and generates the
+          # information Virsh needs to attach it.
+
+          #TODO: Move this to the image process so that this script can be generic
+          echo "10.50.137.2 provider" | sudo tee -a /etc/hosts
+          PROVIDER=stack@provider
+
+          #There are ssh issues running the commands where after a while ssh
+          # commands hang. Using verbose output it is here:
+          # debug1: Requesting no-more-sessions@openssh.com
+          # debug1: Entering interactive session.
+          # Disable this feature http://www.linuxjournal.com/content/speed-multiple-ssh-connections-same-server
+          echo "Host *
+             GSSAPIAuthentication no
+             GSSAPIDelegateCredentials yes
+             ControlMaster auto
+             ControlPath ~/.ssh/master-%r@%h:%p" >> .ssh/config
+
+          # Finding local IP leads to Nova ID leads to virsh name.
+          IP=$(hostname -i)
+          NOVA_LIST=$(ssh -i passthrough $PROVIDER 'source devstack/openrc admin admin && nova list')
+          ID=$(echo "$NOVA_LIST" | python process_outputs.py --ip $IP)
+
+
+          NOVA_ID=$(ssh -i passthrough $PROVIDER "source devstack/openrc admin admin && nova show $ID")
+          VIRSH_NAME=$(echo "$NOVA_ID" | python process_outputs.py --virsh_name)
+
+
+          # Discover PCI card and generate XML and sed snippets to allow attachment.
+          LSPCI=$(ssh -i passthrough $PROVIDER 'lspci | grep "Fibre Channel"')
+          PCI_CARD=$(echo "$LSPCI" | python process_outputs.py --pci)
+
+
+          XML=$(echo $PCI_CARD | python process_outputs.py --xml)
+          CMD="sed -i s,<address domain='0x0000' bus='0x5' slot='0x00' function='0x2'/>,"$XML",g /tmp/fcoe.xml"
+
+          # Put data onto provider and update it.
+
+          scp -i passthrough fcoe.xml $PROVIDER:/tmp/
+          ssh -i passthrough $PROVIDER '$CMD'
+
+          # Run passthrough and clean up.
+          ssh -i passthrough $PROVIDER "virsh nodedev-dettach $PCI_CARD"
+          ssh -i passthrough $PROVIDER "virsh attach-device $VIRSH_NAME /tmp/fcoe.xml"
+
+- builder:
+    name: install-fc-driver
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          sudo apt-get -y install linux-image-extra-$(uname -r) sysfsutils multipath-tools
+          sudo modprobe lpfc
+          sudo systool -c fc_host -v
+
+          #Not sure why this is needed, but install a few more libraries to help install python lxml
+          sudo apt-get -y install libxml2-dev libxslt1-dev lib32z1-dev
+

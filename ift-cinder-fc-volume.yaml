@@ -1,0 +1,152 @@
+- job-template:
+    name: 'dsvm-tempest-ift-cinder-fc-volume'
+    node: '{node}'
+
+    wrappers:
+      - timeout:
+          timeout: 300
+          fail: true
+      - timestamps
+
+    builders:
+      - link-logs
+      - net-info
+      - devstack-checkout
+      - shell: |
+          #!/bin/bash -xe
+          
+          # environment variables
+          # TODO: check all these value are correct
+          export CINDER_REPO=git@github.com:infortrend-openstack/eonstor-ds-cinder-driver.git
+          export CINDER_DRIVER_BRANCH=master
+          export CINDER_DRIVER_DIR=/home/jenkins/eonstor-ds-cinder-driver
+          export CINDER_CLONE_DRIVER=1
+          export IFT_RAID_BACKEND_NAME=infortrenddriver-1
+          export IFT_RAID_POOLS_NAME=LV-1
+          export IFT_RAID_LOG_IN=infortrend
+          export IFT_RAID_PASSWORD=drowssap
+          export IFT_RAID_IP=10.10.10.200
+          export IFT_RAID_CHL_MAP=0,1
+          export DEVSTACK_LOG_FILE_PATH=/opt/stack/logs/*
+          export APACHE_LOG_PATH=/var/log/apache2
+          export RESET_SCRIPT_EXECUTE=1
+          export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
+
+          # infortrend storage link check
+          ping -q -c1 $IFT_RAID_IP > /dev/null
+          if [ $? -eq 0 ]; then
+              echo "Infortrend RAID IP $IFT_RAID_IP Pingable, keep going"
+          else
+              echo "Infortrend RAID IP $IFT_RAID_IP Not Pingable, exit Job!"
+              exit 0
+          fi 
+          
+          # install infortrend driver to cinder project, copy to workspace later
+          if [[ "$CINDER_CLONE_DRIVER" -eq "1" ]]; then
+              rm -rf $CINDER_DRIVER_DIR
+              git clone $CINDER_REPO $CINDER_DRIVER_DIR -b $CINDER_DRIVER_BRANCH
+              if [ ! -d "$CINDER_DRIVER_DIR" ]; then
+                  echo "Not find infortrend driver"
+                  exit 0
+              fi
+          fi
+
+          # setup pre_test_hook (It will pre hook before setup openstack environment)
+          function pre_test_hook {{
+              echo "Install infortrend driver libraries" 
+              # Update infortrend driver to cinder project, if exist, pass it!
+              if [ ! -d "$BASE/new/cinder/cinder/volume/drivers/infortrend" ]; then
+                  mkdir -p $BASE/new/cinder/cinder/volume/drivers/infortrend
+                  cp $CINDER_DRIVER_DIR/src/* $BASE/new/cinder/cinder/volume/drivers/infortrend -r
+              fi
+              if [[ ! -f /home/ift/cache/files/Fedora-x86_64-20-20140618-sda.qcow2 ]]; then
+                  cp /home/ift/cache/files/Fedora-x86_64-20-20140618-sda.qcow2 $BASE/new/devstack/files/
+              fi
+
+              echo "Configure the local.conf file to properly setup hp lefthand driver in cinder.conf"
+              cat <<EOF >$BASE/new/devstack/local.conf
+
+          # config cinder.conf
+          [[post-config|\$CINDER_CONF]]
+          [DEFAULT]
+          enabled_backends=$IFT_RAID_BACKEND_NAME
+          default_volume_type=$IFT_RAID_BACKEND_NAME
+
+          [infortrenddriver-1]
+          volume_driver=cinder.volume.drivers.infortrend.infortrend_fc_cli.InfortrendCLIFCDriver
+          volume_backend_name=$IFT_RAID_BACKEND_NAME
+          infortrend_pools_name=$IFT_RAID_POOLS_NAME
+          san_login=$IFT_RAID_LOG_IN
+          san_ip=$IFT_RAID_IP
+          infortrend_slots_a_channels_id=$IFT_RAID_CHL_MAP
+          #san_password=$IFT_RAID_PASSWORD
+          #infortrend_thin_provisioning=thick
+          #infortrend_remote_replication=TRUE
+          #infortrend_tiering=0,1
+          #infortrend_ssd_cache=TRUE
+
+          # Use post-extra because the tempest configuration file is
+          # overwritten with the .sample after post-config.
+          [[post-extra|\$TEMPEST_CONFIG]]
+          [volume]
+          storage_protocol=iSCSI
+          vendor_name=Infortrend
+          build_timeout = 256
+          EOF
+
+              echo "Configure localrc file to properly setup CINDER_ENABLED_BACKENDS"
+              cat <<EOF >>$BASE/new/devstack/localrc
+          CINDER_ENABLED_BACKENDS=$IFT_RAID_BACKEND_NAME
+          EOF
+
+          # set FORCE=yes to prevent not support DISTRO 
+          sudo sed -i 's/trusty|/trusty|utopic|/g' $BASE/new/devstack/stack.sh
+          }}
+
+          export -f pre_test_hook
+
+          # To keep our CINDER_ENABLED_BACKENDS configuration in localrc
+          export KEEP_LOCALRC=true
+
+          # setup TEMPEST environment variables
+          export PYTHONUNBUFFERED=true
+          export DEVSTACK_GATE_TIMEOUT=300
+          export DEVSTACK_GATE_TEMPEST=1
+          export DEVSTACK_GATE_TEMPEST_REGEX="volume"
+
+          # set tempest concurrency to ?
+          export TEMPEST_CONCURRENCY=1
+
+          # Let's use the http protocol instead of git protocol
+          export GIT_BASE="https://review.openstack.org/p"
+
+          if [ -z $ZUUL_PROJECT ]; then
+              export ZUUL_PROJECT=openstack/cinder
+          fi
+          if [ -z $ZUUL_BRANCH ]; then
+              export ZUUL_BRANCH=master
+          fi
+          cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+
+          # in safe-devstack-vm-gate-wrap, move logs to jenkins workspace
+          sed -i 's/exit $RETVAL/ \
+          sudo mv $BASE\/logs\/* $WORKSPACE\/logs \
+          if [[ "$RESET_SCRIPT_EXECUTE" -eq "1" ]]; then \
+              sudo python $RESET_SCRIPT_DIR\/reset.py \
+          fi \
+          java -jar $RESET_SCRIPT_DIR\/raidcmd_ESDS10.jar $IFT_RAID_IP reset controller -y \
+          sudo rm -rf $BASE\/new\/cinder\/cinder\/volume\/drivers\/infortrend\/ \
+          exit $RETVAL/g' safe-devstack-vm-gate-wrap.sh
+
+          # clear log if exist previous job's log
+          sudo rm -rf $DEVSTACK_LOG_FILE_PATH 
+          sudo rm -rf $APACHE_LOG_PATH
+          sudo mkdir $APACHE_LOG_PATH
+
+          # execute jobs!
+          ./safe-devstack-vm-gate-wrap.sh
+
+    publishers:
+      - review-devstack-logs
+      - review-console-log
+      - reset-fc-slave-node
