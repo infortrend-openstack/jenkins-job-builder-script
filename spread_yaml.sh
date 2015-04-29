@@ -10,6 +10,7 @@ sed -i 's/dsvm-tempest-ift-driver-volume-test/dsvm-tempest-ift-driver-volume-tes
 sed -i 's/infortrend_iscsi_cli.InfortrendCLIISCSIDriver/infortrend_fc_cli.InfortrendCLIFCDriver/g' $FILE_SELF_FIBRE
 sed -i 's/reset-iscsi-slave-node/reset-fc-slave-node/g' $FILE_SELF_FIBRE
 sed -i 's/export IFT_RAID_CHL_MAP=4,5/export IFT_RAID_CHL_MAP=0,1/g' $FILE_SELF_FIBRE
+sed -i 's/iSCSI/FC/g' $FILE_SELF_FIBRE
 
 cp $FILE_ORIGI $FILE_ISCSI
 sed -i 's/dsvm-tempest-ift-driver-volume-test/dsvm-tempest-ift-cinder-iscsi-volume/g' $FILE_ISCSI
@@ -23,3 +24,4 @@ sed -i 's/console-log/review-console-log/g' $FILE_FIBRE
 sed -i 's/infortrend_iscsi_cli.InfortrendCLIISCSIDriver/infortrend_fc_cli.InfortrendCLIFCDriver/g' $FILE_FIBRE
 sed -i 's/reset-iscsi-slave-node/reset-fc-slave-node/g' $FILE_FIBRE
 sed -i 's/export IFT_RAID_CHL_MAP=4,5/export IFT_RAID_CHL_MAP=0,1/g' $FILE_FIBRE
+sed -i 's/iSCSI/FC/g' $FILE_FIBRE

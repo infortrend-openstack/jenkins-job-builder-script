@@ -89,7 +89,7 @@
           # overwritten with the .sample after post-config.
           [[post-extra|\$TEMPEST_CONFIG]]
           [volume]
-          storage_protocol=iSCSI
+          storage_protocol=FC
           vendor_name=Infortrend
           build_timeout = 256
           EOF
