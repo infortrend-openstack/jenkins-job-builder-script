@@ -5,21 +5,21 @@
     vendor: Infortrend
 
     jobs:
-        - noop-check-communication:
-            node: 'iscsi_slave || devstack-precise-check || d-p-c'
         - dsvm-tempest-ift-driver-volume-test:
-            node: 'iscsi_slave || devstack-precise-check || d-p-c'
+            node: 'iscsi_slave'
         - dsvm-tempest-ift-driver-volume-test-fc:
-            node: 'fc_slave || devstack-precise-check || d-p-c' 
+            node: 'fc_slave' 
         - dsvm-tempest-ift-cinder-iscsi-volume:
-            node: 'iscsi_slave || devstack-precise-check || d-p-c'
+            node: 'iscsi_slave'
         - dsvm-tempest-ift-cinder-fc-volume:
-            node: 'fc_slave || devstack-precise-check || d-p-c'
+            node: 'fc_slave'
         - reset-iscsi-slave:
-            node: 'iscsi_slave || devstack-precise-check || d-p-c'
+            node: 'iscsi_slave'
         - reset-fc-slave:
-            node: 'fc_slave || devstack-precise-check || d-p-c'
+            node: 'fc_slave'
+        #- noop-check-communication:
+        #    node: 'iscsi_slave'
         #- dsvm-tempest-full:
-        #    node: 'fc_slave || devstack-precise-check || d-p-c'
+        #    node: 'fc_slave'
         #- unit-test:
-        #    node: 'iscsi_slave || devstack-precise-check || d-p-c'
+        #    node: 'iscsi_slave'
