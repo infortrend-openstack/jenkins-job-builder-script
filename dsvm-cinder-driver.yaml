@@ -18,7 +18,7 @@
           # environment variables
           # TODO: check all these value are correct
           export CINDER_REPO=git@github.com:infortrend-openstack/eonstor-ds-cinder-driver.git
-          export CINDER_DRIVER_BRANCH=master
+          export CINDER_DRIVER_BRANCH=develop
           export CINDER_DRIVER_DIR=/home/jenkins/eonstor-ds-cinder-driver
           export CINDER_CLONE_DRIVER=1
           export IFT_RAID_BACKEND_NAME=infortrenddriver-1
