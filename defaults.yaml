@@ -5,7 +5,7 @@
 
       <p><b>Do not edit this job through the web</b></p>
     project-type: freestyle
-    concurrent: true
+    concurrent: false
 
     wrappers:
       - timeout:
