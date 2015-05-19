@@ -79,6 +79,7 @@
           san_login=$IFT_RAID_LOG_IN
           san_ip=$IFT_RAID_IP
           infortrend_slots_a_channels_id=$IFT_RAID_CHL_MAP
+          infortrend_slots_b_channels_id=""
           #san_password=$IFT_RAID_PASSWORD
           #infortrend_thin_provisioning=thick
           #infortrend_remote_replication=TRUE
@@ -135,7 +136,7 @@
               sudo python $RESET_SCRIPT_DIR\/reset.py \
           fi \
           java -jar $RESET_SCRIPT_DIR\/raidcmd_ESDS10.jar $IFT_RAID_IP reset controller -y \
-          sudo rm -rf $BASE\/new\/cinder\/cinder\/volume\/drivers\/infortrend\/ \
+          sudo rm -rf $BASE\/new\/* \
           exit $RETVAL/g' safe-devstack-vm-gate-wrap.sh
 
           # clear log if exist previous job's log
