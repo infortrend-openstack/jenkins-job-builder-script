@@ -17,6 +17,8 @@
             node: 'iscsi_slave'
         - reset-fc-slave:
             node: 'fc_slave'
+        - wait-reset-iscsi-slave
+        - wait-reset-fc-slave
         #- noop-check-communication:
         #    node: 'iscsi_slave'
         #- dsvm-tempest-full:

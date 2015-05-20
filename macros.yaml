@@ -159,6 +159,20 @@
             destination: '/tmp/$BUILD_TAG'
 
 - publisher:
+    name: wait-reset-iscsi
+    publishers:
+      - trigger:
+          project: wait-reset-iscsi-slave
+          threshold: FAILURE
+
+- publisher:
+    name: wait-reset-fc
+    publishers:
+      - trigger:
+          project: wait-reset-fc-slave
+          threshold: FAILURE
+
+- publisher:
     name: reset-iscsi-slave-node
     publishers:
       - trigger:

@@ -2,6 +2,8 @@
     name: 'dsvm-tempest-ift-cinder-iscsi-volume'
     node: '{node}'
 
+    block-downstream: true
+
     wrappers:
       - timeout:
           timeout: 300
