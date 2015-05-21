@@ -2,60 +2,33 @@
     name: 'reset-iscsi-slave'
     node: '{node}'
 
-    block-upstream: true
-    block-downstream: true
+    wrappers:
+      - timeout:
+          timeout: 5
+          fail: false
+      - timestamps
 
     builders:
       - shell: |
           #!/bin/bash -xe
           
           echo "Start reset iscsi slave"
-          sudo reboot
-
-    publishers:
-      - wait-reset-iscsi
+          ssh ift@iscsi 'sudo reboot -f'
 
 - job-template:
     name: 'reset-fc-slave'
     node: '{node}'
 
-    block-upstream: true
-    block-downstream: true
+    wrappers:
+      - timeout:
+          timeout: 5
+          fail: false
+      - timestamps
 
     builders:
       - shell: |
           #!/bin/bash -xe
 
           echo "Start reset fc slave"
-          sudo reboot
-
-    publishers:
-      - wait-reset-fc
-
-- job-template:
-    name: 'wait-reset-iscsi-slave'
-    node: '{node}'
-
-    block-upstream: true
-
-    builders:
-      - shell: |
-          #!/bin/bash -xe
-
-          echo "Wait Slave reboot and controller reboot..."
-          sleep 300
-
-
-- job-template:
-    name: 'wait-reset-fc-slave'
-    node: '{node}'
-
-    block-upstream: true
-
-    builders:
-      - shell: |
-          #!/bin/bash -xe
-
-          echo "Wait Slave reboot and controller reboot..."
-          sleep 300
+          ssh ift@fc 'sudo reboot -f'
 
