@@ -186,6 +186,17 @@
           project: reset-fc-slave
           threshold: FAILURE
 
+- publisher:
+    name: post-build
+    publishers:
+      - post-tasks:
+        - matches:
+          - log-text: Build was aborted
+            operator: AND
+          script: |
+            sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y 
+            sleep 60
+            sudo reboot -f
 
 - builder:
     name: net-info

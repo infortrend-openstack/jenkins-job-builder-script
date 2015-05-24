@@ -13,9 +13,9 @@
             node: 'iscsi_slave'
         - dsvm-tempest-ift-cinder-fc-volume:
             node: 'fc_slave'
-        - reset-iscsi-slave
+        - reset-iscsi-slave:
             node: 'iscsi_slave'
-        - reset-fc-slave
+        - reset-fc-slave:
             node: 'fc_slave'
         - wake-up-zuul-merger
         #- noop-check-communication

@@ -152,3 +152,4 @@
       - review-devstack-logs
       - review-console-log
       - reset-iscsi-slave-node
+      - post-build
