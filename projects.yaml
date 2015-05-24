@@ -18,6 +18,7 @@
         - reset-fc-slave:
             node: 'fc_slave'
         - wake-up-zuul-merger
+        - self-watcher
         #- noop-check-communication
         #    node: 'iscsi_slave'
         #- dsvm-tempest-full:

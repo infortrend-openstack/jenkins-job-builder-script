@@ -1,0 +1,13 @@
+- job-template:
+    name: 'self-watcher'
+    node: '{node}'
+
+    triggers:
+      - timed: 'H 9 * * *'    
+
+    builders:
+      - shell: |
+          bash /etc/jenkins_jobs/config/check-disk-usage.sh
+          exit 0
+
+
