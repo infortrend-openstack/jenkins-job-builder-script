@@ -2,6 +2,8 @@
     name: 'reset-iscsi-slave'
     node: '{node}'
 
+    quiet-period: 0
+
     builders:
       - shell: |
           #!/bin/bash -xe
@@ -13,6 +15,8 @@
 - job-template:
     name: 'reset-fc-slave'
     node: '{node}'
+
+    quiet-period: 0
 
     builders:
       - shell: |
