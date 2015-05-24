@@ -8,6 +8,7 @@
     builders:
       - shell: |
           bash /etc/jenkins_jobs/config/check-disk-usage.sh
+          bash /etc/jenkins_jobs/config/check-slave-license.sh
           exit 0
 
 
