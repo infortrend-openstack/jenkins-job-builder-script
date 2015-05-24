@@ -2,33 +2,23 @@
     name: 'reset-iscsi-slave'
     node: '{node}'
 
-    wrappers:
-      - timeout:
-          timeout: 5
-          fail: false
-      - timestamps
-
     builders:
       - shell: |
           #!/bin/bash -xe
           
           echo "Start reset iscsi slave"
-          ssh ift@iscsi 'sudo reboot -f'
+          ssh ift@iscsi 'sudo reboot -f >/dev/null &'
+          sleep 240
 
 - job-template:
     name: 'reset-fc-slave'
     node: '{node}'
-
-    wrappers:
-      - timeout:
-          timeout: 5
-          fail: false
-      - timestamps
 
     builders:
       - shell: |
           #!/bin/bash -xe
 
           echo "Start reset fc slave"
-          ssh ift@fc 'sudo reboot -f'
+          ssh ift@fc 'sudo reboot -f >/dev/null &'
+          sleep 240
 
