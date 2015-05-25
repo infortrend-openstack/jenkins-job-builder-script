@@ -1,5 +1,5 @@
 - job-template:
-    name: 'dsvm-tempest-ift-cinder-fc-volume'
+    name: 'infortrend-cinder-volume-iscsi'
     node: '{node}'
 
     wrappers:
@@ -26,7 +26,7 @@
           export IFT_RAID_LOG_IN=infortrend
           export IFT_RAID_PASSWORD=drowssap
           export IFT_RAID_IP=10.10.10.200
-          export IFT_RAID_CHL_MAP=0,1
+          export IFT_RAID_CHL_MAP=4,5
           export DEVSTACK_LOG_FILE_PATH=/opt/stack/logs/*
           export APACHE_LOG_PATH=/var/log/apache2
           export RESET_SCRIPT_EXECUTE=1
@@ -73,7 +73,7 @@
           default_volume_type=$IFT_RAID_BACKEND_NAME
 
           [infortrenddriver-1]
-          volume_driver=cinder.volume.drivers.infortrend.infortrend_fc_cli.InfortrendCLIFCDriver
+          volume_driver=cinder.volume.drivers.infortrend.infortrend_iscsi_cli.InfortrendCLIISCSIDriver
           volume_backend_name=$IFT_RAID_BACKEND_NAME
           infortrend_pools_name=$IFT_RAID_POOLS_NAME
           san_login=$IFT_RAID_LOG_IN
@@ -90,7 +90,7 @@
           # overwritten with the .sample after post-config.
           [[post-extra|\$TEMPEST_CONFIG]]
           [volume]
-          storage_protocol=FC
+          storage_protocol=iSCSI
           vendor_name=Infortrend
           build_timeout = 256
           EOF
@@ -151,5 +151,5 @@
     publishers:
       - review-devstack-logs
       - review-console-log
-      - reset-fc-slave-node
+      - reset-iscsi-slave-node
       - post-build
