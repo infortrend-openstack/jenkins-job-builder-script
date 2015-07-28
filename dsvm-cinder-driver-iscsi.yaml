@@ -1,5 +1,5 @@
 - job-template:
-    name: 'dsvm-tempest-ift-driver-volume-test'
+    name: 'dsvm-tempest-ift-driver-volume-test-iscsi'
     node: '{node}'
 
     wrappers:
@@ -20,7 +20,7 @@
           export CINDER_REPO=git@github.com:infortrend-openstack/eonstor-ds-cinder-driver.git
           export CINDER_DRIVER_BRANCH=develop
           export CINDER_DRIVER_DIR=/home/jenkins/eonstor-ds-cinder-driver
-          export CINDER_CLONE_DRIVER=1
+          export CINDER_CLONE_DRIVER=0
           export IFT_RAID_BACKEND_NAME=infortrenddriver-1
           export IFT_RAID_POOLS_NAME=LV-1
           export IFT_RAID_LOG_IN=infortrend
@@ -85,6 +85,7 @@
           #infortrend_remote_replication=TRUE
           #infortrend_tiering=0,1
           #infortrend_ssd_cache=TRUE
+          num_volume_device_scan_tries=20
 
           # Use post-extra because the tempest configuration file is
           # overwritten with the .sample after post-config.

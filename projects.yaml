@@ -5,7 +5,7 @@
     vendor: Infortrend
 
     jobs:
-        - dsvm-tempest-ift-driver-volume-test:
+        - dsvm-tempest-ift-driver-volume-test-iscsi:
             node: 'iscsi_slave'
         - dsvm-tempest-ift-driver-volume-test-fc:
             node: 'fc_slave' 
