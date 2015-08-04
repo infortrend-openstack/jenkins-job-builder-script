@@ -32,6 +32,9 @@
           export RESET_SCRIPT_EXECUTE=1
           export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
 
+          # wait RAID ready
+          sleep 60
+
           # infortrend storage link check
           ping -q -c1 $IFT_RAID_IP > /dev/null
           if [ $? -eq 0 ]; then
