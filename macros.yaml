@@ -195,6 +195,7 @@
             operator: AND
           script: |
             sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y 
+            sudo rm /opt/stack/new/* -rf
             sleep 60
             sudo reboot -f
 
