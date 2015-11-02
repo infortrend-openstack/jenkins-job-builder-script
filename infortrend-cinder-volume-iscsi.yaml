@@ -105,7 +105,7 @@
           EOF
 
           # set FORCE=yes to prevent not support DISTRO 
-          sudo sed -i 's/trusty|/trusty|utopic|/g' $BASE/new/devstack/stack.sh
+          sudo sed -i 's/vivid|/vivid|wily|/g' $BASE/new/devstack/stack.sh
           }}
 
           export -f pre_test_hook
