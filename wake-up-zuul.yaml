@@ -28,9 +28,15 @@
               echo "ISCSI Slave does not exist, exit Job!"
               exit 2
           fi
-          sudo service zuul-merger start
+
+          # change ssh to user:ift way, nothing special
+          ssh ift@172.27.113.3 'sudo service zuul-merger start'
+          #sudo service zuul-merger start
           sleep 600
-          sudo service zuul-merger stop
+
+          # change ssh to user:ift way, nothing special
+          ssh ift@172.27.113.3 'sudo service zuul-merger stop'
+          #sudo service zuul-merger stop
       - link-logs  # In macros.yaml from os-ext-testing
 
 
