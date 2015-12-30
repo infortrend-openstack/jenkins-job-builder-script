@@ -175,7 +175,7 @@
 - publisher:
     name: reset-iscsi-slave-node
     publishers:
-        - postbuildscript:
+      - postbuildscript:
             builders:
             - shell: |
                 #!/bin/bash -xe
@@ -190,7 +190,7 @@
 - publisher:
     name: reset-fc-slave-node
     publishers:
-        - postbuildscript:
+      - postbuildscript:
             builders:
             - shell: |
                 #!/bin/bash -xe
