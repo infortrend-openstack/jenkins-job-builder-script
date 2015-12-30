@@ -9,7 +9,7 @@
           #!/bin/bash -xe
           
           echo "Start reset iscsi slave"
-          sudo reboot -f >/dev/null &
+          #sudo reboot -f >/dev/null &
           sleep 240
 
 - job-template:
@@ -23,6 +23,6 @@
           #!/bin/bash -xe
 
           echo "Start reset fc slave"
-          sudo reboot -f >/dev/null &
+          #sudo reboot -f >/dev/null &
           sleep 240
 
