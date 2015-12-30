@@ -175,6 +175,14 @@
 - publisher:
     name: reset-iscsi-slave-node
     publishers:
+        - postbuildscript:
+            builders:
+            - shell: |
+                #!/bin/bash -xe
+                
+                echo "Slave reboot in one minute"
+                sudo shutdown -r +1
+                sleep 55
       - trigger:
           project: reset-iscsi-slave
           threshold: FAILURE
@@ -182,6 +190,14 @@
 - publisher:
     name: reset-fc-slave-node
     publishers:
+        - postbuildscript:
+            builders:
+            - shell: |
+                #!/bin/bash -xe
+                
+                echo "Slave reboot in one minute"
+                sudo shutdown -r +1
+                sleep 55
       - trigger:
           project: reset-fc-slave
           threshold: FAILURE
