@@ -1,0 +1,25 @@
+- project:
+    name: cinder
+    github-org: openstack/cinder
+    node: master
+    vendor: Infortrend
+
+    jobs:
+        - dsvm-tempest-ift-driver-volume-test-iscsi:
+            node: 'iscsi_slave'
+        - dsvm-tempest-ift-driver-volume-test-fc:
+            node: 'fc_slave' 
+        - infortrend-cinder-volume-iscsi:
+            node: 'iscsi_slave'
+        - infortrend-cinder-volume-fc:
+            node: 'fc_slave'
+        - reset-iscsi-slave:
+            node: 'iscsi_slave'
+        - reset-fc-slave:
+            node: 'fc_slave'
+        - wake-up-zuul-merger
+        - self-watcher
+        #- noop-check-communication
+        #    node: 'iscsi_slave'
+        #- dsvm-tempest-full:
+        #    node: 'fc_slave'

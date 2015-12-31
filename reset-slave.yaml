@@ -1,0 +1,28 @@
+- job-template:
+    name: 'reset-iscsi-slave'
+    node: '{node}'
+
+    quiet-period: 0
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          
+          echo "Start reset iscsi slave"
+          sudo reboot -f >/dev/null &
+          sleep 240
+
+- job-template:
+    name: 'reset-fc-slave'
+    node: '{node}'
+
+    quiet-period: 0
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+
+          echo "Start reset fc slave"
+          sudo reboot -f >/dev/null &
+          sleep 240
+

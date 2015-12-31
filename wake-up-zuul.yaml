@@ -1,0 +1,42 @@
+- job-template:
+    name: 'wake-up-zuul-merger'
+    node: '{node}'
+
+    triggers:
+      - timed: '0 0 * * *'
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          if ps ax | grep -v grep | grep zuul-server > /dev/null ; then
+              echo "zuul-server service running"
+          else
+              echo "zuul-server is not running, start it!"
+              sudo service zuul start
+          fi
+          ping -q -c1 fc > /dev/null
+          if [ $? -eq 0 ]; then
+              echo "FC Slave exist"
+          else
+              echo "FC Slave does not exist, exit Job!"
+              exit 1
+          fi
+          ping -q -c1 iscsi > /dev/null
+          if [ $? -eq 0 ]; then
+              echo "ISCSI Slave exist"
+          else
+              echo "ISCSI Slave does not exist, exit Job!"
+              exit 2
+          fi
+
+          # change ssh to user:ift way, nothing special
+          ssh ift@172.27.113.3 'sudo service zuul-merger start'
+          #sudo service zuul-merger start
+          sleep 600
+
+          # change ssh to user:ift way, nothing special
+          ssh ift@172.27.113.3 'sudo service zuul-merger stop'
+          #sudo service zuul-merger stop
+      - link-logs  # In macros.yaml from os-ext-testing
+
+

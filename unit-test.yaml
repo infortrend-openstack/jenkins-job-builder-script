@@ -1,0 +1,19 @@
+- job-template:
+    name: 'unit-test'
+    node: '{node}'
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          # global variables
+          export CINDER_DIR=/home/jenkins/unit-test-folder
+
+          cd $CINDER_DIR
+          bash ./run_test.sh
+
+      - link-logs  # In macros.yaml from os-ext-testing
+
+    publishers:
+      - devstack-logs  # In macros.yaml from os-ext-testing
+      - console-log  # In macros.yaml from os-ext-testing
+
