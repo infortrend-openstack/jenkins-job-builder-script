@@ -167,5 +167,6 @@
     publishers:
       - devstack-logs
       - console-log
-      - reset-iscsi-slave-node
       - post-build
+        #      - reset-iscsi-slave-node
+

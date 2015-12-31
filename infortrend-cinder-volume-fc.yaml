@@ -167,5 +167,6 @@
     publishers:
       - review-devstack-logs
       - review-console-log
-      - reset-fc-slave-node
       - post-build
+        #      - reset-fc-slave-node
+

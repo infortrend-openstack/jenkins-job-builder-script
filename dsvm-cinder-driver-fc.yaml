@@ -167,5 +167,6 @@
     publishers:
       - devstack-logs
       - console-log
-      - reset-fc-slave-node
       - post-build
+        #      - reset-fc-slave-node
+
