@@ -168,5 +168,5 @@
       - devstack-logs
       - console-log
       - post-build
-        #      - reset-fc-slave-node
+      - wait-reset-fc
 
