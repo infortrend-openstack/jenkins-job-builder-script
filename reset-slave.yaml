@@ -25,4 +25,27 @@
           echo "Start reset fc slave"
           sudo reboot -f >/dev/null &
           sleep 240
+          
+- job-template:
+    name: 'wait-reset-iscsi-slave'
+    node: '{node}'
 
+    quiet-period: 0
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+
+          sleep 240
+
+- job-template:
+    name: 'wait-reset-fc-slave'
+    node: '{node}'
+
+    quiet-period: 0
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+
+          sleep 240
