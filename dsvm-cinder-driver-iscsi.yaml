@@ -29,7 +29,7 @@
           export IFT_RAID_CHL_MAP=4,5
           export DEVSTACK_LOG_FILE_PATH=/opt/stack/logs/*
           export APACHE_LOG_PATH=/var/log/apache2
-          export RESET_SCRIPT_EXECUTE=1
+          export RESET_SCRIPT_EXECUTE=0
           export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
 
           # wait RAID ready
@@ -150,8 +150,8 @@
           sudo mv $BASE\/logs\/* $WORKSPACE\/logs \
           if [[ "$RESET_SCRIPT_EXECUTE" -eq "1" ]]; then \
               sudo python $RESET_SCRIPT_DIR\/reset.py \
+              java -jar $RESET_SCRIPT_DIR\/raidcmd_ESDS10.jar $IFT_RAID_IP reset controller -y \
           fi \
-          java -jar $RESET_SCRIPT_DIR\/raidcmd_ESDS10.jar $IFT_RAID_IP reset controller -y \
           sudo rm $PWD\/logs\/libvirt\/libvirtd.log* \
           sudo rm -rf $BASE\/new\/* \
           exit $RETVAL/g' safe-devstack-vm-gate-wrap.sh
