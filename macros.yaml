@@ -196,7 +196,12 @@
           script: |
             sudo python /home/ift/Documents/reset_script/reset.py
             sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y 
+<<<<<<< HEAD
             sudo rm -rf /opt/stack/new/*            
+=======
+            sudo rm /opt/stack/new/* -rf
+            sleep 60
+>>>>>>> a2fa9a94e6bb25c5a22910328fff68fdfc1620e8
             sudo shutdown -r +1
             sleep 60
 
