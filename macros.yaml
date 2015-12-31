@@ -175,14 +175,6 @@
 - publisher:
     name: reset-iscsi-slave-node
     publishers:
-      - postbuildscript:
-            builders:
-            - shell: |
-                #!/bin/bash -xe
-                
-                echo "Slave reboot in one minute"
-                sudo shutdown -r +1
-                sleep 55
       - trigger:
           project: reset-iscsi-slave
           threshold: FAILURE
@@ -190,14 +182,6 @@
 - publisher:
     name: reset-fc-slave-node
     publishers:
-      - postbuildscript:
-            builders:
-            - shell: |
-                #!/bin/bash -xe
-                
-                echo "Slave reboot in one minute"
-                sudo shutdown -r +1
-                sleep 55
       - trigger:
           project: reset-fc-slave
           threshold: FAILURE
@@ -207,13 +191,14 @@
     publishers:
       - post-tasks:
         - matches:
-          - log-text: Build was aborted
+          - log-text: Copying console log
             operator: AND
           script: |
             sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y 
             sudo rm /opt/stack/new/* -rf
             sleep 60
-            sudo reboot -f
+            sudo shutdown -r +1
+            sleep 60
 
 - builder:
     name: net-info

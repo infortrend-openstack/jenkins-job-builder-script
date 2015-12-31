@@ -104,7 +104,7 @@
           [volume]
           storage_protocol=iSCSI
           vendor_name=Infortrend
-          build_timeout=300
+          build_timeout=500
           EOF
 
               echo "Configure localrc file to properly setup CINDER_ENABLED_BACKENDS"
@@ -129,7 +129,7 @@
           #export DEVSTACK_GATE_TEMPEST_REGEX="volume"
 
           #20151230 skip some tempest test
-          export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume)(?!.*test_volume_boot_pattern)(?!.*test_minimum_basic_scenario)(?!.*test_shelve_volume_backed_instance).*'
+          export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume)(?!.*boto)(?!.*test_volume_boot_pattern)(?!.*test_minimum_basic_scenario)(?!.*test_shelve_volume_backed_instance).*'
 
           # set tempest concurrency to ?
           export TEMPEST_CONCURRENCY=1
