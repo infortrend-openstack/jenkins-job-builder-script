@@ -96,7 +96,7 @@
           #infortrend_remote_replication=TRUE
           #infortrend_tiering=0,1
           #infortrend_ssd_cache=TRUE
-          num_volume_device_scan_tries=720
+          num_volume_device_scan_tries=50
 
           # Use post-extra because the tempest configuration file is
           # overwritten with the .sample after post-config.
@@ -104,7 +104,7 @@
           [volume]
           storage_protocol=FC
           vendor_name=Infortrend
-          build_timeout=360
+          build_timeout=256
           EOF
 
               echo "Configure localrc file to properly setup CINDER_ENABLED_BACKENDS"
@@ -167,6 +167,7 @@
     publishers:
       - review-devstack-logs
       - review-console-log
-      - post-build
       - wait-reset-fc
+      - post-build
+      #- wait-reset-fc
 
