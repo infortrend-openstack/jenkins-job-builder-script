@@ -165,7 +165,7 @@
           ./safe-devstack-vm-gate-wrap.sh
 
     publishers:
+      - reset-fc-slave-node
       - review-devstack-logs
       - review-console-log
-      - post-build
-      #- wait-reset-fc
+      #- post-build      
