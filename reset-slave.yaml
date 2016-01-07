@@ -10,12 +10,11 @@
           
           echo "Start reset iscsi slave"
           sudo python /home/ift/Documents/reset_script/reset.py
-          sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
-          sudo rm -rf /opt/stack/new/*
-          sudo shutdown -r +1
-          sleep 60 #This line should be changed to use Groovy script below
-                   # import groovy.transform.Synchronized
-                   # sleep(65000)
+          sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y          
+          sudo shutdown -r +1          
+          sleep 60 # This line should be changed to use Groovy script below
+                   #   import groovy.transform.Synchronized
+                   #   sleep(65000)
 
 - job-template:
     name: 'reset-fc-slave'
@@ -30,11 +29,10 @@
           echo "Start reset fc slave"
           sudo python /home/ift/Documents/reset_script/reset.py
           sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
-          sudo rm -rf /opt/stack/new/*
           sudo shutdown -r +1
-          sleep 60 #This line should be changed to use Groovy script below
-                   # import groovy.transform.Synchronized
-                   # sleep(65000)
+          sleep 60 # This line should be changed to use Groovy script below
+                   #   import groovy.transform.Synchronized
+                   #   sleep(65000)
 - job-template:
     name: 'wait-reset-iscsi-slave'
     node: '{node}'
@@ -44,8 +42,12 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-
-          sleep 240
+          
+          echo "resetting iscsi slave"
+          sleep 65
+          # This line should be changed to use Groovy script below
+          #   import groovy.transform.Synchronized
+          #   sleep(65000)
 
 - job-template:
     name: 'wait-reset-fc-slave'
@@ -57,4 +59,8 @@
       - shell: |
           #!/bin/bash -xe
 
-          sleep 240
+          echo "resetting fc slave"
+          sleep 65
+          # This line should be changed to use Groovy script below
+          #   import groovy.transform.Synchronized
+          #   sleep(65000)

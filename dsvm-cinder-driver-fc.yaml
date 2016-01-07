@@ -166,6 +166,7 @@
 
     publishers:
       - reset-fc-slave-node
+      #- wait-reset-fc
       - devstack-logs
       - console-log
-      #- post-build      
+      - post-build      

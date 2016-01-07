@@ -166,6 +166,7 @@
 
     publishers:
       - reset-iscsi-slave-node
+      #- wait-reset-iscsi
       - review-devstack-logs
       - review-console-log
-      #- post-build      
+      - post-build      
