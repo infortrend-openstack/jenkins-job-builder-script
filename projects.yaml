@@ -22,7 +22,10 @@
         #- wait-reset-fc-slave:
         #    node: 'fc_slave'
         #- wake-up-zuul-merger
-        - self-watcher
+        - self-watcher:
+            node: 'master'
+        - clear-cache-memory:
+            node: 'master'
         #- noop-check-communication
         #    node: 'iscsi_slave'
         #- dsvm-tempest-full:

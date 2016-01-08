@@ -1,0 +1,15 @@
+- job-template:
+    name: 'clear-cache-memory'
+    node: '{node}'
+
+    triggers:
+      - timed: 'H * * * *'
+
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          export PATH=$PATH:/sbin
+
+          echo "Start clearing cache memory..."
+          sudo sysctl -w vm.drop_caches=3
+          echo "Finished"
