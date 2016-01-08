@@ -191,12 +191,16 @@
     publishers:
       - post-tasks:
         - matches:
-          - log-text: Build was aborted
+          - log-text: Copying console log
           operator: AND
           script: |
             sudo python /home/ift/Documents/reset_script/reset.py
             sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
             sudo rm -rf /opt/stack/new/*
+        - matches:
+          - log-text: Build was aborted
+          operator: AND
+          script: |
             sudo reboot
 
 - builder:

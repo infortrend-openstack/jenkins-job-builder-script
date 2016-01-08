@@ -14,14 +14,14 @@
         - infortrend-cinder-volume-fc:
             node: 'fc_slave'
         - reset-iscsi-slave:
-            node: 'iscsi_slave'
+            node: 'master'
         - reset-fc-slave:
-            node: 'fc_slave'
+            node: 'master'
         #- wait-reset-iscsi-slave:
         #    node: 'iscsi_slave'
         #- wait-reset-fc-slave:
         #    node: 'fc_slave'
-        - wake-up-zuul-merger
+        #- wake-up-zuul-merger
         - self-watcher
         #- noop-check-communication
         #    node: 'iscsi_slave'

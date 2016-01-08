@@ -8,6 +8,12 @@
           fail: true
       - timestamps
 
+    properties:
+      - build-blocker:
+          use-build-blocker: true
+          blocking-jobs:
+            - "reset-iscsi-slave"
+
     builders:
       - link-logs
       - net-info
@@ -164,8 +170,12 @@
           # execute jobs!
           ./safe-devstack-vm-gate-wrap.sh
 
+      - trigger-builds:
+        - project: "reset-iscsi-slave"
+          block: false
+
     publishers:
-      - reset-iscsi-slave-node
+      #- reset-iscsi-slave-node
       #- wait-reset-iscsi
       - devstack-logs
       - console-log
