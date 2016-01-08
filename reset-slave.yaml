@@ -7,9 +7,9 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          ssh ift@iscsi 'sudo shutdown -r +1' # wait reset raid
+          ssh ift@iscsi 'sudo shutdown -r +2' # wait reset raid
           echo "Resetting iscsi slave..."
-          sleep 240 
+          sleep 300 
 
 - job-template:
     name: 'reset-fc-slave'
@@ -20,9 +20,9 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          ssh ift@fc 'sudo shutdown -r +1' # wait reset raid 
+          ssh ift@fc 'sudo shutdown -r +2' # wait reset raid 
           echo "Resetting fc slave..."
-          sleep 240
+          sleep 300
 
 - job-template:
     name: 'wait-reset-iscsi-slave'
