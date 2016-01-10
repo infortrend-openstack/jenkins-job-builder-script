@@ -3,7 +3,7 @@
     node: '{node}'
 
     triggers:
-      - timed: 'H */4 * * *'
+      - timed: 'H */12 * * *'
 
     builders:
       - shell: |

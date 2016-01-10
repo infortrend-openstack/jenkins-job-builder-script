@@ -14,9 +14,9 @@
         - infortrend-cinder-volume-fc:
             node: 'fc_slave'
         - reset-iscsi-slave:
-            node: 'master'
+            node: 'iscsi_slave'
         - reset-fc-slave:
-            node: 'master'
+            node: 'fc_slave'
         #- wait-reset-iscsi-slave:
         #    node: 'iscsi_slave'
         #- wait-reset-fc-slave:

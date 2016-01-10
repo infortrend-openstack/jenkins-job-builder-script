@@ -7,9 +7,11 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          ssh ift@iscsi 'sudo shutdown -r +2' # wait reset raid
+          sudo shutdown -r +1
           echo "Resetting iscsi slave..."
-          sleep 425 
+          #sleep 65 # This line should be changed to use Groovy Postbuild below
+    publishers:
+      - groovy-postbuild: "sleep(65000)"        
 
 - job-template:
     name: 'reset-fc-slave'
@@ -20,9 +22,11 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          ssh ift@fc 'sudo shutdown -r +2' # wait reset raid 
+          sudo shutdown -r +1 
           echo "Resetting fc slave..."
-          sleep 425
+          #sleep 65 #This line should be changed to use Groovy Postbuild below
+    publishers:
+      - groovy-postbuild: "sleep(65000)"
 
 - job-template:
     name: 'wait-reset-iscsi-slave'
