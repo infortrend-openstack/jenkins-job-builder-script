@@ -7,11 +7,11 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          java -jar ~/jenkins-cli.jar -s http://172.27.113.3:8080/ offline-node "iSCSI Slave"
+          java -jar ~/jenkins-cli.jar -s http://localhost:8080/ offline-node "iSCSI Slave"
           ssh ift@iscsi 'sudo shutdown -r +1'
           echo "Resetting iscsi slave..."
           sleep 70
-          java -jar ~/jenkins-cli.jar -s http://172.27.113.3:8080/ online-node "iSCSI Slave"
+          java -jar ~/jenkins-cli.jar -s http://localhost:8080/ online-node "iSCSI Slave"
    #publishers:
       #- groovy-postbuild: "sleep(65000)"        
 
@@ -24,11 +24,11 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          java -jar ~/jenkins-cli.jar -s http://172.27.113.3:8080/ offline-node "FC Slave"
+          java -jar ~/jenkins-cli.jar -s http://localhost:8080/ offline-node "FC Slave"
           ssh ift@fc 'sudo shutdown -r +1'          
           echo "Resetting fc slave..."
           sleep 70
-          java -jar ~/jenkins-cli.jar -s http://172.27.113.3:8080/ online-node "FC Slave"
+          java -jar ~/jenkins-cli.jar -s http://localhost:8080/ online-node "FC Slave"
    #publishers:
       #- groovy-postbuild: "sleep(65000)"
 
