@@ -14,9 +14,9 @@
         - infortrend-cinder-volume-fc:
             node: 'fc_slave'
         - reset-iscsi-slave:
-            node: 'iscsi_slave'
+            node: 'master'
         - reset-fc-slave:
-            node: 'fc_slave'
+            node: 'master'
         #- wait-reset-iscsi-slave:
         #    node: 'iscsi_slave'
         #- wait-reset-fc-slave:
@@ -26,6 +26,8 @@
             node: 'master'
         - clear-cache-memory:
             node: 'master'
+        #- clear-pending-executor:
+        #    node: 'master'
         #- noop-check-communication
         #    node: 'iscsi_slave'
         #- dsvm-tempest-full:

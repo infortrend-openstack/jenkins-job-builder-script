@@ -8,11 +8,11 @@
           fail: true
       - timestamps
 
-    properties:
-      - build-blocker:
-          use-build-blocker: true
-          blocking-jobs:
-            - "reset-fc-slave"
+    #properties:
+    #  - build-blocker:
+    #      use-build-blocker: true
+    #      blocking-jobs:
+    #        - "reset-fc-slave"
 
     builders:
       - link-logs
@@ -35,7 +35,7 @@
           export IFT_RAID_CHL_MAP=0,1
           export DEVSTACK_LOG_FILE_PATH=/opt/stack/logs/*
           export APACHE_LOG_PATH=/var/log/apache2
-          export RESET_SCRIPT_EXECUTE=0
+          export RESET_SCRIPT_EXECUTE=1
           export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
 
           # wait RAID ready
