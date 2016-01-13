@@ -205,6 +205,11 @@
             sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
             sudo rm -rf /opt/stack/new/*
             sudo reboot
+        - matches:
+          - log-text: the main setup script run by this job failed
+          operator: AND
+          script: |
+            sudo reboot
 
 - builder:
     name: net-info
