@@ -38,23 +38,14 @@
           export RESET_SCRIPT_EXECUTE=1
           export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
 
-          # wait RAID ready
-          sleep 60
-
           # infortrend storage link check
-          #ping -q -c1 $IFT_RAID_IP > /dev/null
-          if ping -q -c1 $IFT_RAID_IP > /dev/null ; then
-              echo "Infortrend RAID IP $IFT_RAID_IP Pingable, keep going"
-          else
-              echo "Infortrend RAID IP $IFT_RAID_IP Not Pingable, try again later!"
-              sleep 30
-              if ping -q -c1 $IFT_RAID_IP > /dev/null ; then
-                  echo "Infortrend RAID IP $IFT_RAID_IP Pingable, keep going"
-              else
-                  echo "Infortrend RAID IP $IFT_RAID_IP Not Pingable, exit Job!" 
-                  exit 22
-              fi
-          fi
+          # ping -q -c1 $IFT_RAID_IP > /dev/null
+          until ping -q -c1 $IFT_RAID_IP > /dev/null
+          do
+              echo "Infortrend RAID not online yet, try again later.."
+              sleep 60 # wait raid ready
+          done
+          echo "Infortrend RAID online, keep going!"
 
           # workaround 20151207: could not determine a suitable URL for the plugin
           if [ -f /etc/openstack/clouds.yaml ]; then
