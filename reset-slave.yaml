@@ -8,7 +8,7 @@
       - shell: |
           #!/bin/bash -xe
           java -jar ~/jenkins-cli.jar -s http://localhost:8080/ offline-node "iSCSI Slave"
-          ssh ift@iscsi 'sudo shutdown -r +1'
+          ssh ift@iscsi 'sudo shutdown -r +1 >/dev/null &'
           echo "Resetting iscsi slave..."
           sleep 70
           java -jar ~/jenkins-cli.jar -s http://localhost:8080/ online-node "iSCSI Slave"
@@ -25,7 +25,7 @@
       - shell: |
           #!/bin/bash -xe
           java -jar ~/jenkins-cli.jar -s http://localhost:8080/ offline-node "FC Slave"
-          ssh ift@fc 'sudo shutdown -r +1'          
+          ssh ift@fc 'sudo shutdown -r +1 >/dev/null &'          
           echo "Resetting fc slave..."
           sleep 70
           java -jar ~/jenkins-cli.jar -s http://localhost:8080/ online-node "FC Slave"
