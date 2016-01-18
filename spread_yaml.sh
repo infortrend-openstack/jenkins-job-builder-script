@@ -8,7 +8,7 @@ FILE_FIBRE=/etc/jenkins_jobs/config/infortrend-cinder-volume-fc.yaml
 cp $FILE_ORIGI $FILE_SELF_FIBRE
 sed -i 's/dsvm-tempest-ift-driver-volume-test-iscsi/dsvm-tempest-ift-driver-volume-test-fc/g' $FILE_SELF_FIBRE
 sed -i 's/infortrend_iscsi_cli.InfortrendCLIISCSIDriver/infortrend_fc_cli.InfortrendCLIFCDriver/g' $FILE_SELF_FIBRE
-sed -i 's/reset-iscsi/reset-fc/g' $FILE_SELF_FIBRE
+sed -i 's/post-build-iscsi/post-build-fc/g' $FILE_SELF_FIBRE
 sed -i 's/export IFT_RAID_CHL_MAP=4,5/export IFT_RAID_CHL_MAP=0,1/g' $FILE_SELF_FIBRE
 sed -i 's/iSCSI/FC/g' $FILE_SELF_FIBRE
 
@@ -22,6 +22,6 @@ sed -i 's/dsvm-tempest-ift-driver-volume-test-iscsi/infortrend-cinder-volume-fc/
 sed -i 's/devstack-logs/review-devstack-logs/g' $FILE_FIBRE
 sed -i 's/console-log/review-console-log/g' $FILE_FIBRE
 sed -i 's/infortrend_iscsi_cli.InfortrendCLIISCSIDriver/infortrend_fc_cli.InfortrendCLIFCDriver/g' $FILE_FIBRE
-sed -i 's/reset-iscsi/reset-fc/g' $FILE_FIBRE
+sed -i 's/post-build-iscsi/post-build-fc/g' $FILE_FIBRE
 sed -i 's/export IFT_RAID_CHL_MAP=4,5/export IFT_RAID_CHL_MAP=0,1/g' $FILE_FIBRE
 sed -i 's/iSCSI/FC/g' $FILE_FIBRE

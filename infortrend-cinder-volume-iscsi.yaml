@@ -35,7 +35,7 @@
           export IFT_RAID_CHL_MAP=4,5
           export DEVSTACK_LOG_FILE_PATH=/opt/stack/logs/*
           export APACHE_LOG_PATH=/var/log/apache2
-          export RESET_SCRIPT_EXECUTE=1
+          export RESET_SCRIPT_EXECUTE=0
           export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
 
           # infortrend storage link check
@@ -167,13 +167,13 @@
           # execute jobs!
           ./safe-devstack-vm-gate-wrap.sh
 
-      - trigger-builds:
-        - project: "reset-iscsi-slave"
-          block: false
+      #- trigger-builds:
+      #  - project: "reset-iscsi-slave"
+      #    block: false
 
     publishers:
       #- reset-iscsi-slave-node
       #- wait-reset-iscsi
       - review-devstack-logs
       - review-console-log
-      - post-build      
+      - post-build-iscsi

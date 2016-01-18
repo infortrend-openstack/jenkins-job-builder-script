@@ -187,29 +187,32 @@
           threshold: FAILURE
 
 - publisher:
-    name: post-build
+    name: post-build-iscsi
     publishers:
       - post-tasks:
-       # - matches:
-         # - log-text: Copying console log
-         # operator: AND
-         # script: |
-         #   sudo python /home/ift/Documents/reset_script/reset.py
-         #   sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
-         #   sudo rm -rf /opt/stack/new/*
         - matches:
-          - log-text: Build was aborted
+          - log-text: Copying console log
           operator: AND
           script: |
             sudo python /home/ift/Documents/reset_script/reset.py
             sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
             sudo rm -rf /opt/stack/new/*
-            sudo reboot
+            ssh ift@master 'java -jar ~/jenkins-cli.jar -s http://localhost:8080/ build reset-iscsi-slave'
+            sleep 5
+
+- publisher: 
+    name: post-build-fc
+    publishers: 
+      - post-tasks: 
         - matches:
-          - log-text: the main setup script run by this job failed
+          - log-text: Copying console log
           operator: AND
           script: |
-            sudo reboot
+            sudo python /home/ift/Documents/reset_script/reset.py
+            sudo java -jar /home/ift/Documents/reset_script/raidcmd_ESDS10.jar 10.10.10.200 reset controller -y
+            sudo rm -rf /opt/stack/new/*
+            ssh ift@master 'java -jar ~/jenkins-cli.jar -s http://localhost:8080/ build reset-fc-slave'
+            sleep 5
 
 - builder:
     name: net-info

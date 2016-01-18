@@ -8,7 +8,7 @@
       - shell: |
           #!/bin/bash -xe
           java -jar ~/jenkins-cli.jar -s http://localhost:8080/ offline-node "iSCSI Slave"
-          sleep 60 # wait copying console log
+          sleep 10 # wait previous job finish
           ssh ift@iscsi 'sudo reboot'
           echo "Resetting iscsi slave..."
           sleep 60
@@ -26,7 +26,7 @@
       - shell: |
           #!/bin/bash -xe
           java -jar ~/jenkins-cli.jar -s http://localhost:8080/ offline-node "FC Slave"
-          sleep 60 # wait copying console log
+          sleep 10 #  wait previous job finish
           ssh ift@fc 'sudo reboot'          
           echo "Resetting fc slave..."
           sleep 60
