@@ -126,8 +126,9 @@
           export KEEP_LOCALRC=true
 
           # setup TEMPEST environment variables
-          export PYTHONUNBUFFERED=true
-          export DEVSTACK_GATE_TIMEOUT=300
+          export PYTHONUNBUFFERED=true          
+          #export DEVSTACK_GATE_TIMEOUT=180 ---2016/2/5 change to BUILD_TIMEOUT in milliseconds
+          export BUILD_TIMEOUT=240*60000
           export DEVSTACK_GATE_TEMPEST=1
           #export DEVSTACK_GATE_TEMPEST_REGEX="volume"
 
