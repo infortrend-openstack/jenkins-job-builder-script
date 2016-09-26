@@ -6,8 +6,8 @@ declare -i iscsi_slave_usage=`ssh ift@iscsi 'df | grep /dev/sda' | awk {'print $
 
 RET_BAD=0
 
-if [ "$disk_usage" -gt "40" ]; then
-    echo "Master node Disk usage $disk_usage%, it's over 40%, please check!"
+if [ "$disk_usage" -gt "60" ]; then
+    echo "Master node Disk usage $disk_usage%, it's over 60%, please check!"
     RET_BAD=1
 else
     echo "Master node Disk usage $disk_usage%"

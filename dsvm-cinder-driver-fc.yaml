@@ -33,6 +33,12 @@
           export IFT_RAID_PASSWORD=drowssap
           export IFT_RAID_IP=10.10.10.200
           export IFT_RAID_CHL_MAP=0,1
+          export IFT_CLI_PATH=/opt/bin/Infortrend/raidcmd_ESDS10.jar
+          export IFT_CLI_RETRY=5
+          export IFT_CLI_TIMEOUT=30
+          export VOLUME_SCAN_RETRIES=15
+          export TEMPEST_NOVA_BUILD_TIMEOUT=1200
+          export DEVSTACK_BUILD_TIMEOUT=21600000 #360*60*1000(ms)
           export DEVSTACK_LOG_FILE_PATH=/opt/stack/logs/*
           export APACHE_LOG_PATH=/var/log/apache2
           export RESET_SCRIPT_EXECUTE=0
@@ -68,8 +74,9 @@
           # setup pre_test_hook (It will pre hook before setup openstack environment)
           function pre_test_hook {{
               echo "Install infortrend driver libraries" 
-              # Update infortrend driver to cinder project, if exist, pass it!
-              if [ ! -d "$BASE/new/cinder/cinder/volume/drivers/infortrend" ]; then
+              # If CINDER_CLONE_DRIVER set to 1, overwrite our driver!
+              if [[ "$CINDER_CLONE_DRIVER" -eq "1" ]]; then
+                  rm -rf $BASE/new/cinder/cinder/volume/drivers/infortrend
                   mkdir -p $BASE/new/cinder/cinder/volume/drivers/infortrend
                   cp $CINDER_DRIVER_DIR/src/* $BASE/new/cinder/cinder/volume/drivers/infortrend -r
               fi
@@ -90,16 +97,17 @@
           volume_driver=cinder.volume.drivers.infortrend.infortrend_fc_cli.InfortrendCLIFCDriver
           volume_backend_name=$IFT_RAID_BACKEND_NAME
           infortrend_pools_name=$IFT_RAID_POOLS_NAME
-          san_login=$IFT_RAID_LOG_IN
           san_ip=$IFT_RAID_IP
           infortrend_slots_a_channels_id=$IFT_RAID_CHL_MAP
           infortrend_slots_b_channels_id=""
+          infortrend_cli_path=$IFT_CLI_PATH
+          infortrend_cli_max_retries=$IFT_CLI_RETRY
+          infortrend_cli_timeout=$IFT_CLI_TIMEOUT
+          num_volume_device_scan_tries=$VOLUME_SCAN_RETRIES
+          #infortrend_provisioning=0
+          #infortrend_tiering=0,2
+          #san_login=$IFT_RAID_LOG_IN
           #san_password=$IFT_RAID_PASSWORD
-          #infortrend_thin_provisioning=thick
-          #infortrend_remote_replication=TRUE
-          #infortrend_tiering=0,1
-          #infortrend_ssd_cache=TRUE
-          num_volume_device_scan_tries=50
 
           # Use post-extra because the tempest configuration file is
           # overwritten with the .sample after post-config.
@@ -107,7 +115,26 @@
           [volume]
           storage_protocol=FC
           vendor_name=Infortrend
-          build_timeout=256
+          
+          [compute]
+          build_timeout=$TEMPEST_NOVA_BUILD_TIMEOUT
+          #Other services that do not define build_timeout will inherit this value
+
+          [compute-feature-enabled]
+          attach_encrypted_volume=false
+
+          [volume-feature-enabled]
+          backup=false
+          #multi_backend = false
+          #snapshot = true
+          #clone = true
+          #api_extensions = all
+          #api_v1 = true
+          #api_v2 = true
+          #api_v3 = false
+          #bootable = true
+          #volume_services = false          
+          
           EOF
 
               echo "Configure localrc file to properly setup CINDER_ENABLED_BACKENDS"
@@ -128,12 +155,13 @@
           # setup TEMPEST environment variables
           export PYTHONUNBUFFERED=true          
           #export DEVSTACK_GATE_TIMEOUT=180 ---2016/2/5 change to BUILD_TIMEOUT in milliseconds
-          export BUILD_TIMEOUT=14400000 #240*600000
+          export BUILD_TIMEOUT=$DEVSTACK_BUILD_TIMEOUT
           export DEVSTACK_GATE_TEMPEST=1
-          #export DEVSTACK_GATE_TEMPEST_REGEX="volume"
+          export DEVSTACK_GATE_TEMPEST_REGEX="volume"
 
-          #20151230 skip some tempest test
-          export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume)(?!.*boto)(?!.*test_volume_boot_pattern)(?!.*test_minimum_basic_scenario)(?!.*test_shelve_volume_backed_instance).*'
+          #20160923 skip all tempest scenario tests
+          #export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume*)(?!tempest.scenario.*)'
+          #export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume)(?!.*boto)(?!.*test_volume_boot_pattern)(?!.*test_minimum_basic_scenario)(?!.*test_shelve_volume_backed_instance).*'
 
           # set tempest concurrency to ?
           export TEMPEST_CONCURRENCY=1
