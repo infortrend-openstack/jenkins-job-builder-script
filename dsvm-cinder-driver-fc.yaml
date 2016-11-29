@@ -23,10 +23,10 @@
           
           # environment variables
           # TODO: check all these value are correct
-          export CINDER_REPO=git@github.com:infortrend-openstack/eonstor-ds-cinder-driver.git
-          export CINDER_DRIVER_BRANCH=develop
-          export CINDER_DRIVER_DIR=/home/jenkins/eonstor-ds-cinder-driver
           export CINDER_CLONE_DRIVER=0
+          export CINDER_REPO=https://github.com/infortrend-openstack/eonstor-ds-cinder-driver.git
+          export CINDER_DRIVER_BRANCH=master
+          export CINDER_DRIVER_DIR=/home/jenkins/eonstor-ds-cinder-driver
           export IFT_RAID_BACKEND_NAME=infortrenddriver-1
           export IFT_RAID_POOLS_NAME=LV-1
           export IFT_RAID_LOG_IN=infortrend
@@ -43,6 +43,7 @@
           export APACHE_LOG_PATH=/var/log/apache2
           export RESET_SCRIPT_EXECUTE=0
           export RESET_SCRIPT_DIR=/home/ift/Documents/reset_script
+          export IFT_CLI_CACHE=True
 
           # infortrend storage link check
           # ping -q -c1 $IFT_RAID_IP > /dev/null
@@ -92,6 +93,7 @@
           [DEFAULT]
           enabled_backends=$IFT_RAID_BACKEND_NAME
           default_volume_type=$IFT_RAID_BACKEND_NAME
+          num_volume_device_scan_tries=$VOLUME_SCAN_RETRIES
 
           [infortrenddriver-1]
           volume_driver=cinder.volume.drivers.infortrend.infortrend_fc_cli.InfortrendCLIFCDriver
@@ -103,6 +105,7 @@
           infortrend_cli_path=$IFT_CLI_PATH
           infortrend_cli_max_retries=$IFT_CLI_RETRY
           infortrend_cli_timeout=$IFT_CLI_TIMEOUT
+          infortrend_cli_cache=$IFT_CLI_CACHE
           num_volume_device_scan_tries=$VOLUME_SCAN_RETRIES
           #infortrend_provisioning=0
           #infortrend_tiering=0,2
