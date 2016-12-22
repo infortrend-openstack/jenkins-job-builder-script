@@ -8,6 +8,8 @@ RET_BAD=0
 
 if [ "$disk_usage" -gt "60" ]; then
     echo "Master node Disk usage $disk_usage%, it's over 60%, please check!"
+    echo -e "  -> Maybe logs on master node are too large:  \c"
+    du -sh /srv/static/logs
     RET_BAD=1
 else
     echo "Master node Disk usage $disk_usage%"
