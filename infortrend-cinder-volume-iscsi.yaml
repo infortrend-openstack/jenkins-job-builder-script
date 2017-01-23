@@ -81,9 +81,13 @@
                   mkdir -p $BASE/new/cinder/cinder/volume/drivers/infortrend
                   cp $CINDER_DRIVER_DIR/src/* $BASE/new/cinder/cinder/volume/drivers/infortrend -r
               fi
-              #if [[ ! -f /home/ift/cache/files/Fedora-x86_64-20-20140618-sda.qcow2 ]]; then
-              #    cp /home/ift/cache/files/Fedora-x86_64-20-20140618-sda.qcow2 $BASE/new/devstack/files/
-              #fi
+              #20170123 pull the Gerrit changes from zuul-merger
+              if [ -n $ZUUL_REF ]; then
+                  temp_dir=$PWD
+                  cd $BASE/new/cinder/
+                  sudo git pull ift@master:/var/lib/zuul/git/$ZUUL_PROJECT $ZUUL_REF
+                  cd $temp_dir
+              fi
 
               echo "Configure the local.conf file to properly setup hp lefthand driver in cinder.conf"
               cat <<EOF >$BASE/new/devstack/local.conf
@@ -160,12 +164,13 @@
           #export DEVSTACK_GATE_TIMEOUT=180 ---2016/2/5 change to BUILD_TIMEOUT in milliseconds
           export BUILD_TIMEOUT=$DEVSTACK_BUILD_TIMEOUT
           export DEVSTACK_GATE_TEMPEST=1
-          export DEVSTACK_GATE_TEMPEST_REGEX="volume"
+          #export DEVSTACK_GATE_TEMPEST_REGEX="volume"
 
           #20160923 skip all tempest scenario tests
           #export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume*)(?!tempest.scenario.*)'
-          #export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume)(?!.*boto)(?!.*test_volume_boot_pattern)(?!.*test_minimum_basic_scenario)(?!.*test_shelve_volume_backed_instance).*'
 
+          #We don't support manage/unmanage snapshots
+          export 'DEVSTACK_GATE_TEMPEST_REGEX=^(?=.*volume)(?!.*test_unmanage_manage_snapshot)'
           # set tempest concurrency to ?
           export TEMPEST_CONCURRENCY=1
 
@@ -178,6 +183,7 @@
           if [ -z $ZUUL_BRANCH ]; then
               export ZUUL_BRANCH=master
           fi
+
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 
           # in safe-devstack-vm-gate-wrap, move logs to jenkins workspace
