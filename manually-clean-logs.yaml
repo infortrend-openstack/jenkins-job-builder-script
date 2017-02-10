@@ -1,0 +1,24 @@
+- job-template:
+    name: 'manually-clean-logs'
+    node: '{node}'
+
+    builders:
+      - shell: |
+          export KEEP_LOGS_NUMBER=(84 65)
+
+          for (( x=0; x<=9; x++ ))
+          do
+              for (( y=0; y<=9; y++ ))
+              do
+                  folder=$x$y
+                  if [[ " ${KEEP_LOGS_NUMBER[@]} " =~ " $folder " ]]
+                  then
+                      echo "Skiping folder $folder"
+                  else
+                      echo "Removing folder $folder"
+                      sudo rm -rf /srv/static/logs/$folder
+                  fi
+              done
+          done
+          exit 0
+
