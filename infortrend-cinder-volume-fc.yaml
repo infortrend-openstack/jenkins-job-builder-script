@@ -35,7 +35,7 @@
           export IFT_RAID_CHL_MAP=0,1
           export IFT_CLI_PATH=/opt/bin/Infortrend/raidcmd_ESDS10.jar
           export IFT_CLI_RETRY=5
-          export IFT_CLI_TIMEOUT=30
+          export IFT_CLI_TIMEOUT=60
           export VOLUME_SCAN_RETRIES=15
           export TEMPEST_NOVA_BUILD_TIMEOUT=1200
           export DEVSTACK_BUILD_TIMEOUT=21600000 #360*60*1000(ms)
@@ -92,6 +92,28 @@
               echo "Configure the local.conf file to properly setup hp lefthand driver in cinder.conf"
               cat <<EOF >$BASE/new/devstack/local.conf
 
+          [[local|localrc]]
+          CINDER_ENABLED_BACKENDS=$IFT_RAID_BACKEND_NAME
+          
+          # Services
+          ENABLED_SERVICES=rabbit,mysql,key,tempest
+          ENABLED_SERVICES+=,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc,n-cauth
+
+          #Neutron Services
+          ENABLED_SERVICES+=,neutron,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-lbaas
+
+          #Swift Services
+          #ENABLED_SERVICES+=,s-proxy,s-object,s-container,s-account
+
+          #Glance Services
+          ENABLED_SERVICES+=,g-api,g-reg
+
+          #Cinder Services
+          ENABLED_SERVICES+=,cinder,c-api,c-vol,c-sch,c-bak
+
+          #Horizon Services
+          ENABLED_SERVICES+=,horizon
+
           # config cinder.conf
           [[post-config|\$CINDER_CONF]]
           [DEFAULT]
@@ -144,10 +166,10 @@
           
           EOF
 
-              echo "Configure localrc file to properly setup CINDER_ENABLED_BACKENDS"
-              cat <<EOF >>$BASE/new/devstack/localrc
-          CINDER_ENABLED_BACKENDS=$IFT_RAID_BACKEND_NAME
-          EOF
+          #    echo "Configure localrc file to properly setup CINDER_ENABLED_BACKENDS"
+          #    cat <<EOF >>$BASE/new/devstack/localrc
+          #CINDER_ENABLED_BACKENDS=$IFT_RAID_BACKEND_NAME
+          #EOF
 
           # set FORCE=yes to prevent not support DISTRO 
           #sudo sed -i 's/vivid|/vivid|wily|/g' $BASE/new/devstack/stack.sh

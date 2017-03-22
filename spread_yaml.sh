@@ -16,6 +16,7 @@ cp $FILE_ORIGI $FILE_ISCSI
 sed -i 's/dsvm-tempest-ift-driver-volume-test-iscsi/infortrend-cinder-volume-iscsi/g' $FILE_ISCSI
 sed -i 's/devstack-logs/review-devstack-logs/g' $FILE_ISCSI
 sed -i 's/console-log/review-console-log/g' $FILE_ISCSI
+sed -i 's/link-logs-dsvm/link-logs/g' $FILE_ISCSI
 
 cp $FILE_ORIGI $FILE_FIBRE
 sed -i 's/dsvm-tempest-ift-driver-volume-test-iscsi/infortrend-cinder-volume-fc/g' $FILE_FIBRE
@@ -25,3 +26,4 @@ sed -i 's/infortrend_iscsi_cli.InfortrendCLIISCSIDriver/infortrend_fc_cli.Infort
 sed -i 's/post-build-iscsi/post-build-fc/g' $FILE_FIBRE
 sed -i 's/export IFT_RAID_CHL_MAP=4,5/export IFT_RAID_CHL_MAP=0,1/g' $FILE_FIBRE
 sed -i 's/iSCSI/FC/g' $FILE_FIBRE
+sed -i 's/link-logs-dsvm/link-logs/g' $FILE_FIBRE

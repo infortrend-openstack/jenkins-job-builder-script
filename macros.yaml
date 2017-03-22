@@ -96,7 +96,18 @@
           #!/bin/sh
           echo "Triggered by: https://review.openstack.org/$ZUUL_CHANGE patchset $ZUUL_PATCHSET"
 
+          if [ -z "$LOG_PATH" ]; then
+              export LOG_PATH=$JOB_NAME/$BUILD_ID
+          fi
+
           echo "Detailed logs: http://openstack.infortrend.com/$LOG_PATH/"
+
+ - builder:
+     name: link-logs-dsvm
+     builders:
+       - shell: |
+           #!/bin/sh
+           echo "Detailed logs: http://openstack.infortrend.com/$JOB_NAME/$BUILD_ID/"
 
 - publisher:
     name: coverage-log
