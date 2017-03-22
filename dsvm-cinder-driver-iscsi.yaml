@@ -82,7 +82,7 @@
                   cp $CINDER_DRIVER_DIR/src/* $BASE/new/cinder/cinder/volume/drivers/infortrend -r
               fi
               #20170123 pull the Gerrit changes from zuul-merger
-              if [ -n $ZUUL_REF ]; then
+              if [ -n "$ZUUL_REF" ]; then
                   temp_dir=$PWD
                   cd $BASE/new/cinder/
                   sudo git pull ift@master:/var/lib/zuul/git/$ZUUL_PROJECT $ZUUL_REF
@@ -199,10 +199,10 @@
           # Let's use the http protocol instead of git protocol
           export GIT_BASE="https://review.openstack.org/p"
 
-          if [ -z $ZUUL_PROJECT ]; then
+          if [ -z "$ZUUL_PROJECT" ]; then
               export ZUUL_PROJECT=openstack/cinder
           fi
-          if [ -z $ZUUL_BRANCH ]; then
+          if [ -z "$ZUUL_BRANCH" ]; then
               export ZUUL_BRANCH=master
           fi
 
