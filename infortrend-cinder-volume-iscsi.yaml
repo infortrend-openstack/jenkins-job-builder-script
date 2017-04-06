@@ -209,15 +209,20 @@
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 
           # in safe-devstack-vm-gate-wrap, move logs to jenkins workspace
-          sed -i 's/exit $RETVAL/ \
-          sudo mv $BASE\/logs\/* $WORKSPACE\/logs \
+          sed -i 's#exit_handler $RETVAL# \
+          sudo mv $BASE/logs/* $WORKSPACE/logs \
           if [[ "$RESET_SCRIPT_EXECUTE" -eq "1" ]]; then \
-              sudo python $RESET_SCRIPT_DIR\/reset.py \
-              java -jar $RESET_SCRIPT_DIR\/raidcmd_ESDS10.jar $IFT_RAID_IP reset controller -y \
+              sudo python $RESET_SCRIPT_DIR/reset.py \
+              java -jar $RESET_SCRIPT_DIR/raidcmd_ESDS10.jar $IFT_RAID_IP reset controller -y \
           fi \
-          sudo rm $PWD\/logs\/libvirt\/libvirtd.log* \
-          sudo rm -rf $BASE\/new\/* \
-          exit $RETVAL/g' safe-devstack-vm-gate-wrap.sh
+          sudo rm $PWD/logs/libvirt/libvirtd.log* \
+          sudo rm -rf $BASE/new/* \
+          exit_handler $RETVAL#g' safe-devstack-vm-gate-wrap.sh
+
+          #2017/04/05 fix bug for functions.sh line:521
+          sed -i 's#    local cache_dir=$BASE/cache/files/#    local cache_dir=$BASE/cache/files/\
+              sudo mkdir -p $cache_dir\
+              sudo chown -R $USER:$USER $cache_dir#g' devstack-gate/functions.sh
 
           # clear log if exist previous job's log
           sudo rm -rf $DEVSTACK_LOG_FILE_PATH 
